@@ -26,3 +26,4 @@ This contains some definitions to hold the tree definitions and functions to rec
 11.1. be able to define analogous like objects and classes from languages defined in c like java, php, perl and python. 
 we want to be able to create recognizers for these objects or idioms in memory. There are many different representations. 
 What about DOM objects in perl containing class infomation? We dont want to automatically recognize this, but allow users to create recognizers of graph structures, either in static or dynamic structures defined in c.
+12. Define the relationships between the classes/objects explicitly
