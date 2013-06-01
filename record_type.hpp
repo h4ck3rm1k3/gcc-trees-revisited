@@ -1,0 +1,1 @@
+class RecordType: public Scope {};

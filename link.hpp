@@ -1,0 +1,3 @@
+class LinkType  {
+  // extern 
+};
