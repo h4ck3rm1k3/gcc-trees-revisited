@@ -1,4 +1,7 @@
-test :
+testparse :
+	g++ -std=gnu++11 treedumpparse.cpp
+
+testtre :
 	g++ -std=gnu++11 foo_load.cpp
 
 test1 :
