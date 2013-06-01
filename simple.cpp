@@ -72,10 +72,18 @@ Identifier id_scope() {
 NamespaceDecl global_namespace_decl(Source source) {} 
 
 class Type {};
+class Align {
+public:
+};
+class Align_8 : public Align {};
+
+class Size {};
+
 
 class FuncType : public Type 
 {
 public:
+
 
   class Return {};
 
@@ -85,11 +93,18 @@ public:
     };
   };
 
+  Size  size;
+  Align algn;
+  FuncType::Return retn;
+  FuncType::Params prms;
+
 };
 
 class LinkType  {
   // extern 
 };
+
+class Used {};
 
 class Func {
 public:
@@ -97,6 +112,15 @@ public:
   class Params {
   public:
     class Param {
+
+      Identifier name;
+      Type type;
+      Scope scpe; // points to the function
+      Source srcp;
+      Type argt;
+      Size size;
+      Align algn;
+      Used used;
     };
   };
 
@@ -146,12 +170,6 @@ Decl function_decl(
 };
 
 class String {};
-class Align {
-public:
-};
-class Align_8 : public Align {};
-
-class Size {};
 
 Identifier  identifier_node(String strg);
        
@@ -163,7 +181,7 @@ FuncType function_type(Size  size,
 
 }
 
-class Used {};
+
 
 Func::Params::Param      parm_decl(
 			   Identifier name,
