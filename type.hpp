@@ -1,3 +1,6 @@
+#pragma once 
+namespace GCC {
+
 class IsSigned { };
 class Unsigned  : public IsSigned{};
 class Signed  : public IsSigned{};
@@ -9,3 +12,5 @@ public:
 class Align_8 : public Align {};
 
 class Size {};
+
+};

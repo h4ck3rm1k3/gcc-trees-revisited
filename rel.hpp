@@ -1,3 +1,4 @@
+#pragma once 
 namespace Rel //ationships
 {
   template <class T> class Pointer {};

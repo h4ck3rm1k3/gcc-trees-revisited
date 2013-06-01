@@ -1,9 +1,16 @@
+#pragma once
+#include "type.hpp"
+#include "link.hpp"
+#include "list.hpp"
+
+namespace GCC 
+{
+
 class FuncType : public Type 
 {
 public:
 
-
-  class Return {};
+  class Return  : public Type {};
 
   class Params {
   public:
@@ -16,6 +23,11 @@ public:
   FuncType::Return retn;
   FuncType::Params prms;
 
+public:
+  FuncType & setsize(Size);
+  FuncType & setalgn(int);
+  FuncType & setretn(Type);
+  FuncType & setprms(Params);
 };
 
 class FuncDecl;
@@ -35,6 +47,15 @@ public:
       Size size;
       Align algn;
       Used used;
+    public:
+      Param & setname(Identifier name);
+      Param & settype(Type t);
+      Param & setargt(Type t);
+      Param & setalgn(int i);
+      Param & setsize(Size t);
+      Param & setused();
+      Param & setsrcp(const char * file, int line);
+      FuncDecl & setscpe(FuncDecl );
     };
   };
 
@@ -49,23 +70,19 @@ public:
   FuncDecl::Params args;
   LinkType _extern;
 
+public:
+  FuncDecl & setname(Identifier );
+  FuncDecl & setmngl(Identifier );
+  FuncDecl & settype(Type );
+  FuncDecl & setscpe(Scope );
+  FuncDecl & setargs(FuncDecl::Params );
+  FuncDecl & setsrcp(const char * file, int line );
+  FuncDecl & setlinkextern();
+  
 };
 
-FuncDecl function_decl( 
-		   Identifier name, 
-		   Identifier  mngl, 
-		   FuncType type,  
-		   Scope scpe,     
-		   Source  srcp,
-		   Decl chain,
-		   FuncDecl::Params args,
-		   LinkType _extern  
-		    ) {};
-
-FuncType function_type(Size  size,
-		       Align algn,
-		       FuncType::Return retn,
-		       FuncType::Params prms) {}
+  FuncDecl function_decl();
+  FuncType function_type() {}
 
 class ParamTypesList  : public TreeList 
 {
@@ -76,16 +93,9 @@ class ParamTypesList  : public TreeList
 ParamTypesList     tree_list_param( Type valu,      ParamTypesList chan     ) {};
 ParamTypesList     tree_list_param( Type valu) {}
 
-FuncDecl::Params::Param      parm_decl(
-			   Identifier name,
-			   Type type,
-			   Scope scpe,
-			   Source srcp,
-			   Type argt,
-			   Size size,
-			   Align algn,
-			   Used used) {}
+FuncDecl::Params::Param      parm_decl() {}
 
 FuncDecl::Body func_body() {}
 FuncDecl::Params func_parameters() {}
 FuncDecl::Params::Param  func_parameter() {}
+};

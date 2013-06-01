@@ -1,3 +1,6 @@
+#include "rel.hpp"
+
+namespace GCC { 
 class Used {};
 
 class Decl {
@@ -6,3 +9,4 @@ public:
   Source source;
 };
 
+};

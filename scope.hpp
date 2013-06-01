@@ -1,3 +1,5 @@
+#pragma once
+namespace GCC { 
 /*
   scopes :
   translation_unit_decl ::
@@ -12,8 +14,11 @@ type_decl     type   record_type
 class Scope; // forward
 
 class Source {
+public:
+  Source(const char * file, int line);
   // Source File,line number and char range
 };
 
-class Scope {};
-class Translation_Unit_Decl  : public Scope {};
+class Scope  {};
+
+};
