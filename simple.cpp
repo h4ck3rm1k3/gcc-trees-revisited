@@ -1,4 +1,13 @@
+/*
+  scopes :
+  translation_unit_decl ::
+     function_decl foo
+        parm_decl
 
+the record type does not have a scope, 
+type_decl     type   record_type
+    field_decl
+*/
 namespace Rel //ationships
 {
   template <class T> class Pointer {};
@@ -30,21 +39,22 @@ namespace Rel //ationships
 
 class Scope; // forward
 
-class Decl {
-public:
-  Rel::TIsContained<Scope> contained_in_scope;
-};
-
-class Scope {
-  Rel::TContains<Decl> decls;  
-
-};
-
-class Translation_Unit_Decl  : public Scope {};
-
 class Source {
   // Source File,line number and char range
 };
+
+class Decl {
+public:
+  Rel::TIsContained<Scope> contained_in_scope;
+  Source source;
+};
+
+class Scope {
+};
+
+class Translation_Unit_Decl  : public Scope {};
+class RecordType: public Scope {};
+
 
 class Identifier {
   const char * value;
@@ -52,9 +62,9 @@ class Identifier {
 };
 
 class NamespaceDecl : public Decl {
-
-  // a namespace can be in a namespace
-  
+  Identifier name;
+  Scope scope;  // a namespace can be in a namespace
+  Rel::TContains<Decl> decls;  
 };
 
 Translation_Unit_Decl translation_unit_decl ();
@@ -105,18 +115,19 @@ class LinkType  {
 };
 
 class Used {};
+class FuncDecl;
 
-class Func {
+class FuncDecl : public Scope , public Decl{
 public:
   class Body {};
   class Params {
   public:
-    class Param {
+    class Param : public Decl {
 
       Identifier name;
       Type type;
-      Scope scpe; // points to the function
-      Source srcp;
+      Rel::TIsContained<FuncDecl> scpe; // points to the function that contains the parameter
+
       Type argt;
       Size size;
       Align algn;
@@ -127,10 +138,12 @@ public:
   Identifier name;
   Identifier  mngl;
   FuncType type;
-  Scope scpe;
-  Source  srcp;
-  Decl chain;
-  Func::Params args;
+
+  Rel::TIsContained<Translation_Unit_Decl> scpe; // points to the translation untion that contains the function
+  // what about functions inside functions?
+
+  //  Decl chain;
+  FuncDecl::Params args;
   LinkType _extern;
 
 };
@@ -150,40 +163,31 @@ Expr expr_constant() {}
 Expr expr_plus_operator() {}
 Expr expr_expression() {}
 Stmt stmt_statement() {}
-Func::Body func_body() {}
-Func::Params func_parameters() {}
+FuncDecl::Body func_body() {}
+FuncDecl::Params func_parameters() {}
+FuncDecl::Params::Param  func_parameter() {}
 
-Func::Params::Param  func_parameter() {}
 
-
-Decl function_decl( 
+FuncDecl function_decl( 
 		   Identifier name, 
 		   Identifier  mngl, 
 		   FuncType type,  
 		   Scope scpe,     
 		   Source  srcp,
 		   Decl chain,
-		   Func::Params args,
+		   FuncDecl::Params args,
 		   LinkType _extern  
-		    )
-{
-};
+		    ) {};
 
 class String {};
-
 Identifier  identifier_node(String strg);
-       
+      
 FuncType function_type(Size  size,
 		       Align algn,
 		       FuncType::Return retn,
-		       FuncType::Params prms)
-{
+		       FuncType::Params prms) {}
 
-}
-
-
-
-Func::Params::Param      parm_decl(
+FuncDecl::Params::Param      parm_decl(
 			   Identifier name,
 			   Type type,
 			   Scope scpe,
@@ -191,18 +195,11 @@ Func::Params::Param      parm_decl(
 			   Type argt,
 			   Size size,
 			   Align algn,
-			   Used used)
-{
-}
+			   Used used) {}
 
-class IsSigned {
-};
-
-class Unsigned  : public IsSigned{
-};
-
-class Signed  : public IsSigned{
-};
+class IsSigned { };
+class Unsigned  : public IsSigned{};
+class Signed  : public IsSigned{};
 
 class Integer {
 public:
