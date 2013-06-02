@@ -28,71 +28,110 @@ namespace client
 
   template <typename Iterator>  bool parse_tree(Iterator first, Iterator last)
   {
-    std::string match;    
+    std::vector<std::string> match;    
     bool r = phrase_parse(
 			  first,                          /*< start iterator >*/
 			  last,                           /*< end iterator >*/
 			  * (
-			     '@' >> ulong_ >> * (char_)	     			     
+			     '@' >>  char_("0-9")    >> * (char_) 
 			     >> 
-			     * (  * (char_) >>		 ':' >>		 * (char_)		 )
+			     * (  
+			      string("algn") 
+			      | string("accs") 
+			      | string("argt") 
+			      | string("body") 
+			      | string("bpos") 
+			      | string("chain")
+			      | string("dcls") 
+			      | string("domn") 
+			      | string("flds") 
+			      | string("lang") 
+			      | string("link")
+			      | string("lngt") 
+			      | string("max") 
+			      | string("min") 
+			      | string("mngl") 
+			      | string("note") 
+			      | string("name") 
+			      | string("prec") 
+			      | string("prms") 
+			      | string("ptd") 
+			      | string("retn") 
+			      | string("scpe")
+			      | string("sign")
+			      | string("size")
+			      | string("srcp") 
+			      | string("strg") 
+			      | string("tag") 
+			      | string("type") 
+			      | string("used") 
+			      | string("valu") 
+
+			      //* (char_) 
+			      >>		 ':' >>		 * (char_)		 )
 			     
 			     ),   /*< the parser >*/
 			  space,                           /*< the skip-parser >*/
 			  match
 			  );
+    cout << "Match out:" << endl;   
+    for (std::vector<std::string>::iterator it = match.begin() ; it != match.end(); ++it)   {
+      std::cout << *it << endl;
+    }
+
     if (first != last) // fail if we did not get a full match
       {
-	cout << "fail1:" << match << endl;
+	//	cout << "failed1:" << endl;   
 	return false;
       }  
-    cout << match << endl;
+    cout << "match1:" << endl;   
     return r;
   }
   
   template <typename Iterator> bool parse_tree_attr(Iterator first, Iterator last)
   {
-    std::string match;
+    std::vector<std::string> match;    
     bool r = phrase_parse(
 			  first,                          /*< start iterator >*/
-			  last,                           /*< end iterator >*/
-			  
+			  last,                           /*< end iterator >*/			  
 			  * (
 			     (
-			      string("algn") |
-			      string("argt") |
-			      string("body") |
-			      string("chain") |
-			      string("dcls") |
-			      string("lang") |
-			      string("lngt") |
-			      string("link") |
-			      string("accs") |
-			      string("bpos") |
-			      string("domn") |
-			      string("ptd") |
-			      string("min") |
-			      string("tag") |
-			      string("flds") |
-			      string("max") |
-			      string("note") |
-			      string("prec") |
-			      string("retn") |
-			      string("prms") |
-			      string("scpe") |
-			      string("sign") |
-			      string("size") |
-			      string("srcp") |
-			      string("used") |
-			      *(char_)
+			      string("algn") 
+			      | string("accs") 
+			      | string("argt") 
+			      | string("body") 
+			      | string("bpos") 
+			      | string("chain")
+			      | string("dcls") 
+			      | string("domn") 
+			      | string("flds") 
+			      | string("lang") 
+			      | string("link")
+			      | string("lngt") 
+			      | string("max") 
+			      | string("min") 
+			      | string("note") 
+			      | string("prec") 
+			      | string("prms") 
+			      | string("ptd") 
+			      | string("retn") 
+			      | string("scpe")
+			      | string("sign")
+			      | string("size")
+			      | string("srcp") 
+			      | string("tag") 
+			      | string("type") 
+			      | string("used") 
+			      | string("valu") 
+			      //			      |  			      *(char_)
 			      ) 
 			     >>	':' 
 			     >>	
 			     (
-			      * (char_)		 |
-			      string("operator") >> (
-						     * (char_)
-						     )
+			      //string("artificial") 
+			      string("operator") >> (   * (char_)     )
+			      | * (char_)		
+			      		      
 			      )
 			     )
 			  
@@ -100,12 +139,18 @@ namespace client
 			  space,                           /*< the skip-parser >*/
 			  match
 			  );
-    if (first != last) // fail if we did not get a full match
-      {
-	cout << "fail2:" << match << endl;
+
+    cout << "Match2:" << endl;    
+    for (std::vector<std::string>::iterator it = match.begin() ; it != match.end(); ++it)      {
+	std::cout << *it << endl;
+      }
+
+    if (first != last)       {
+	cout << "fail2:" << endl;    
 	return false;
       }
-    cout << "match2:" << match << endl;
+    cout << "match2:" << endl;
+
     return r;
   }
   
