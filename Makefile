@@ -15,3 +15,12 @@ test1 :
 
 dump :
 	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -fdump-translation-unit foo.cpp
+
+treedumpparse.ii:
+	g++ -std=gnu++11 -save-temps treedumpparse.cpp 
+
+dumpcomplex  :treedumpparse.ii.001t.tu
+	echo test
+
+treedumpparse.ii.001t.tu :	treedumpparse.ii
+	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -std=gnu++11 -fdump-translation-unit treedumpparse.ii
