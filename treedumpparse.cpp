@@ -39,6 +39,10 @@ namespace client
     std::cout << "node ref:"<< s << std::endl;
   }
 
+  void handle_nddecl(utree s) {
+    std::cout << "node decl:"<< s << std::endl;
+  }
+
   void handlefile(utree s) {
     std::cout << "handle file:"<< s << std::endl;
   }
@@ -104,7 +108,7 @@ namespace client
 	  identifier_node =(
 			    ( 
 			     strg_field
-			     >>  lngt_field 
+			     >>  -lngt_field 
 			      )
 			    |    note_field
 			    );
@@ -112,22 +116,26 @@ namespace client
 
 	  node_type = 
 	     string("namespace_decl")[some_node_type] >> name_field >> scope_field >> source_field
-	     |  string("identifier_node")   >> identifier_node
+	    | string("array_type")
+	    | string("boolean_type")
+	    | string("complex_type")
+	    | string("field_decl")
+	    | string("function_decl") >> + field_value
+	    | string("function_type")
+	    | string("integer_cst")
+	    | string("integer_type")
+	    | string("lang_type")
+	    | string("parm_decl")
+	    | string("pointer_type")
+	    | string("real_type")
+	    | string("record_type")
+	    | string("reference_type")
 	    | string("translation_unit_decl")
-
-	    // // generic handler for anything else
-	    // //	    | (+char_("a-zA-Z0-9_")[some_node_type]) >> * field_value;
-  
-	     | string("function_type")
-	     | string("void_type")
-	     | string("real_type")
-	     | string("tree_list")
-	     | string("type_decl")
-	     | string("parm_decl")
-	     | string("integer_type")
-	     | string("integer_cst")
-	     | string("function_decl") >> + field_value
-	    
+	    | string("tree_list")
+	    | string("type_decl")
+	    | string("vector_type")
+	    | string("void_type")
+	    | string("identifier_node")   >> identifier_node
 	    ;
 	  
 	  
@@ -145,15 +153,35 @@ namespace client
 	     		  | char_(':')
 	     		  |  char_("a-zA-Z0-9")
 			  ))
-	    | (string("global type") |string("complex long double"))
+	    | (
+string("global type") 
+| string("complex") >> string("double")
+| string("complex") >> string("float") 
+| string("__int128")>> string("unsigned")
+| string("complex") >> string("int") 
+| string("complex") >> string("long") >> string("double")
+| string("init") >> string("list")
+| string("long") >> string("double")
+| string("long") >> string("int")
+| string("long") >> string("unsigned") >> string("int") 
+| string("unsigned") >> string("int")
+| string("unsigned") >> string("char")
+| string("signed") >> string("char")
+| string("short") >> string("int")
+| string("short") >> string("unsigned") >> string("int")
+| string("undeduced") >> string ("lambda") >> string ("return") >> string ("type")
+| string("unknown") >>  string("type") 
+
+	       )
 	    ;
 	
 	  strg_field = 
 	    string("strg:")  >> strg_value[handle_strg]
 	    ;	
 
-	   bits= (
-	   	 string("128")
+	   bits= (	   	 
+		  string("1")
+		 | string("128")
 	   	 | string("64")
 	   	 | string("32")
 	   	 | string("16")
@@ -181,27 +209,30 @@ namespace client
 	    | string("low :")  >> +(digit[handle_digits])
 	    | string("high:") >> -lit('-') >> +(digit[handle_digits])
 	    | string("accs:") >> string("pub")	
-	    | string("argt:")>>   node_id[handle_name]			
+	    | string("argt:")>>   node_id[handle_ndref]			
 	    | string("body:")>> string("undefined")   
-	    | string("bpos:")  >>   node_id[handle_name]
-	    | string("chain:") >>   node_id[handle_name]
-	    | string("domn:")>>   node_id[handle_name]			
-	    | string("flds:")	>>   node_id[handle_name]		
+	    | string("bpos:")  >>   node_id[handle_ndref]
+	    | string("chain:") >>   node_id[handle_ndref]
+	    | string("domn:")>>   node_id[handle_ndref]			
+	    | string("flds:")	>>   node_id[handle_ndref]		
 	    | string("lang:")  >> string("C")	       
    	    | string("link:")  >> string("extern")
-	    | string("max :")>>   node_id[handle_name]			
-	    | string("min:")>>   node_id[handle_name]			
+	    | string("max :")>>   node_id[handle_ndref]			
+	    | string("min:")>>   node_id[handle_ndref]			
 	    | note_field
 	    | string("prec:") >>  bits   
-	    | string("prms:") >>   node_id[handle_name]			
-	    | string("ptd :")  >>   node_id[handle_name]			
-	    | string("retn:") >>   node_id[handle_name]			
-	    | string("sign:") >> string("unsigned")	      
-	    | string("size:")  >>   node_id[handle_name]
-	    | string("tag:")   >> string("struct")
-	    | string("type:") >>   node_id[handle_name]
+	    | string("prms:") >>   node_id[handle_ndref]			
+	    | string("ptd :")  >>   node_id[handle_ndref]			
+	    | string("retn:") >>   node_id[handle_ndref]			
+	    | string("sign:") >> (
+				  string("signed")   |
+				  string("unsigned")	      
+				  )
+	    | string("size:")  >>   node_id[handle_ndref]
+	    | string("tag :")   >> string("struct")
+	    | string("type:") >>   node_id[handle_ndref]
 	    | string("used:") >> +(digit[handle_digits])     
-	    | string("valu:") >>   node_id[handle_name]
+	    | string("valu:") >>   node_id[handle_ndref]
 	    ;
 
 	  field_value= 
@@ -214,7 +245,7 @@ namespace client
 	    ;
 
 	  main_rule = 	  
-	    node_id >> 
+	    node_id[handle_nddecl] >> 
 	    node_type 
 	    ;
 
@@ -231,12 +262,10 @@ namespace client
 
       // have no spaces in the values
       qi::rule<InputIterator,  spirit::utree()> 	  
-
       filespec,   
-		 strg_value,
-		 node_id,
-		 bits,
-
+	  node_id,
+	  bits,
+	  strg_value	  
       ;
       
       
@@ -245,7 +274,6 @@ namespace client
 		 ////////////////////////////
 
       main_rule,
-
 		 any_field,
 		 node_type,	 
 		 field_value,
