@@ -24,3 +24,17 @@ dumpcomplex  :treedumpparse.ii.001t.tu
 
 treedumpparse.ii.001t.tu :	treedumpparse.ii
 	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -std=gnu++11 -fdump-translation-unit treedumpparse.ii
+
+testvariant2.ii: testvariant2.cpp 
+	g++ -c -std=gnu++11 -save-temps testvariant2.cpp 
+
+
+testvariant2.ii.001t.tu :	testvariant2.ii
+	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -std=gnu++11 -fdump-translation-unit testvariant2.ii
+
+testvariant3.ii.001t.tu :	testvariant3.ii
+	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -std=gnu++11 -fdump-translation-unit testvariant3.ii
+
+testvariant_min.ii.001t.tu :	testvariant_min.ii
+	/usr/lib/gcc/x86_64-linux-gnu/4.7/cc1plus -std=gnu++11 -fdump-translation-unit testvariant_min.ii
+
