@@ -1,3 +1,6 @@
+testparserbig : testparse
+	cat testvariant3.ii.001t.tu | ./testparse
+
 testparser : testparse
 	cat foo.cpp.001t.tu | ./testparse
 

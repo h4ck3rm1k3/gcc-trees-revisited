@@ -119,7 +119,12 @@ namespace client
 	    | string("array_type")
 	    | string("boolean_type")
 	    | string("complex_type")
+	    | string("constructor") // for C++
 	    | string("field_decl")
+
+	    | string("nop_expr")
+	    | string("addr_expr")
+
 	    | string("function_decl") >> + field_value
 	    | string("function_type")
 	    | string("integer_cst")
@@ -130,11 +135,13 @@ namespace client
 	    | string("real_type")
 	    | string("record_type")
 	    | string("reference_type")
+	    | string("string_cst") >> 	      type_field >> strg_field	     >>  -lngt_field 	    
 	    | string("translation_unit_decl")
 	    | string("tree_list")
 	    | string("type_decl")
 	    | string("vector_type")
 	    | string("void_type")
+	    | string("var_decl")
 	    | string("identifier_node")   >> identifier_node
 	    ;
 	  
@@ -181,6 +188,7 @@ string("global type")
 
 	   bits= (	   	 
 		  string("1")
+		 | string("256")
 		 | string("128")
 	   	 | string("64")
 	   	 | string("32")
@@ -206,6 +214,7 @@ string("global type")
 	    | srcp_field 
 	    | strg_field	    
 	    | string("algn:") >> bits
+	    | string("init:")>>   node_id[handle_ndref]			
 	    | string("low :")  >> +(digit[handle_digits])
 	    | string("high:") >> -lit('-') >> +(digit[handle_digits])
 	    | string("accs:") >> string("pub")	
@@ -214,6 +223,8 @@ string("global type")
 	    | string("bpos:")  >>   node_id[handle_ndref]
 	    | string("chain:") >>   node_id[handle_ndref]
 	    | string("domn:")>>   node_id[handle_ndref]			
+	    | string("elts:")	>>   node_id[handle_ndref]		
+	    | string("binf:")	>>   node_id[handle_ndref]		
 	    | string("flds:")	>>   node_id[handle_ndref]		
 	    | string("lang:")  >> string("C")	       
    	    | string("link:")  >> string("extern")
@@ -230,10 +241,16 @@ string("global type")
 				  )
 	    | string("size:")  >>   node_id[handle_ndref]
 	    | string("tag :")   >> string("struct")
-	    | string("type:") >>   node_id[handle_ndref]
+	    | type_field
 	    | string("used:") >> +(digit[handle_digits])     
 	    | string("valu:") >>   node_id[handle_ndref]
+	    | string("idx:") >>   node_id[handle_ndref] // for constructor
+	    | string("op") >> string("0:") >>   node_id[handle_ndref] // for constructor
+	    | string("op") >> string("1:") >>   node_id[handle_ndref] // for constructor
+	    | string("val:") >>   node_id[handle_ndref] // for constructor
 	    ;
+
+	  type_field= string("type:") >>   node_id[handle_ndref];
 
 	  field_value= 
 	    any_field[some_node_field] 
@@ -274,21 +291,22 @@ string("global type")
 		 ////////////////////////////
 
       main_rule,
-		 any_field,
-		 node_type,	 
-		 field_value,
-		 lngt_field,
-		 mngl_field,
-		 name_field,
-		 namespace_decls_field,
-		 scope_field,
-		 source_field,
-		 srcp_field,
-		 strg_field, 
-		 note_field,
-		 secondary_line ,
-		 either_lines ,
-		 identifier_node
+	any_field,
+	node_type,	 
+	field_value,
+	lngt_field,
+	mngl_field,
+	name_field,
+	namespace_decls_field,
+	scope_field,
+	source_field,
+	srcp_field,
+	strg_field, 
+	note_field,
+	secondary_line ,
+	either_lines ,
+	identifier_node,
+	type_field
 	;
       
     };
