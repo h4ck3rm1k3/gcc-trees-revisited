@@ -124,6 +124,90 @@ namespace client
 
 	    | string("nop_expr")
 	    | string("addr_expr")
+| string("array_ref") |
+string("arrow_expr") |
+string("baselink") |
+string("bind_expr") |
+string("binfo") |
+string("bit_and_expr") |
+string("bit_ior_expr") |
+string("bit_not_expr") |
+string("bound_template_template_parm") |
+string("break_stmt") |
+string("call_expr") |
+string("cast_expr") |
+string("component_ref") |
+string("compound_expr") |
+string("cond_expr") |
+string("const_cast_expr") |
+string("const_decl") |
+string("ctor_initializer") |
+string("decl_expr") |
+string("dl_expr") |
+string("dotstar_expr") |
+string("enumeral_type") |
+string("eq_expr") |
+string("error_mark") |
+string("expr_stmt") |
+string("for_stmt") |
+string("ge_expr") |
+string("gt_expr") |
+string("handler") |
+string("identifier_node") |
+string("if_stmt") |
+string("indirect_ref") |
+string("le_expr") |
+string("lshift_expr") |
+string("lt_expr") |
+string("member_ref") |
+string("method_type") |
+string("minus_expr") |
+string("modop_expr") |
+string("mult_expr") |
+string("namespace_decl") |
+string("ne_expr") |
+string("negate_expr") |
+string("nw_expr") |
+string("offset_type") |
+string("overload") |
+string("Parse") |
+string("plus_expr") |
+string("postdecrement_expr") |
+string("postincrement_expr") |
+string("predecrement_expr") |
+string("preincrement_expr") |
+string("real_cst") |
+string("reinterpret_cast_expr") |
+string("return_expr") |
+string("rshift_expr") |
+string("scope_ref") |
+string("sizeof_expr") |
+string("statement_list") |
+string("static_cast_expr") |
+string("string_cst") |
+string("switch_stmt") |
+string("tag_defn") |
+string("template_decl") |
+string("template_id_expr") |
+string("template_parm_index") |
+string("template_template_parm") |
+string("template_type_parm") |
+string("throw_expr") |
+string("trait_expr") |
+string("tree_vec") |
+string("trunc_div_expr") |
+string("trunc_mod_expr") |
+string("truth_andif_expr") |
+string("truth_not_expr") |
+string("truth_orif_expr") |
+string("try_block") |
+string("typeid_expr") |
+string("typename_type") |
+string("typeof_type") |
+string("union_type") |
+string("using_decl") |
+string("using_stmt") |
+string("while_stmt") 
 
 	    | string("function_decl") >> + field_value
 	    | string("function_type")
@@ -244,10 +328,10 @@ string("global type")
 	    | type_field
 	    | string("used:") >> +(digit[handle_digits])     
 	    | string("valu:") >>   node_id[handle_ndref]
-	    | string("idx:") >>   node_id[handle_ndref] // for constructor
+	    | string("idx :") >>   node_id[handle_ndref] // for constructor
 	    | string("op") >> string("0:") >>   node_id[handle_ndref] // for constructor
 	    | string("op") >> string("1:") >>   node_id[handle_ndref] // for constructor
-	    | string("val:") >>   node_id[handle_ndref] // for constructor
+	    | string("val :") >>   node_id[handle_ndref] // for constructor
 	    ;
 
 	  type_field= string("type:") >>   node_id[handle_ndref];
