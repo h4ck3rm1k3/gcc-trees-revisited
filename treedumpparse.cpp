@@ -209,6 +209,20 @@ string("using_decl") |
 string("using_stmt") |
 string("while_stmt") 
 
+	    // more 
+	    | 
+	    string("alignof_expr") |
+	    string("case_label_expr") |
+	    string("do_stmt") |
+	    string("label_decl") 
+
+| 
+	    // more
+	    string("bit_xor_expr") |
+	    string("continue_stmt") |
+	    string("decltype_type") |
+	    string("unary_plus_expr") 
+	    
 	    | string("function_decl") >> + field_value
 	    | string("function_type")
 	    | string("integer_cst")
