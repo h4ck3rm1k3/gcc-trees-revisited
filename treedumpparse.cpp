@@ -67,7 +67,11 @@ namespace client
   void handle_digits(utree s) {
     std::cout << "handle digits:"<< s << std::endl;
   }
- 
+
+  void handle_new_field(utree s) {
+    std::cout << "handle_new_field:"<< s << std::endl;
+  }
+
   void handle_strg(utree s) {
     std::cout << "handle strg:"<< s << std::endl;
   }
@@ -250,7 +254,6 @@ string("while_stmt")
 	  scope_field  =  string("scpe:") >>   node_id[handle_scope] ;
 	  source_field =  string("srcp:")[handle_any] >>   filespec[handlefile];	  
 	  namespace_decls_field =  string("dcls:") >>   node_id[handle_decls];
-	  scope_field = string("scpe:") >> node_id[handle_scope];
 	  srcp_field = string("srcp:") >> filespec[handlefile];
 	  strg_value = (+(
 	     		  char_('-')
@@ -297,7 +300,9 @@ string("global type")
 	  note_field = 
 	    string("note:") >> (
 				string("artificial")  |
-				string("operator")  
+				string("operator")   |
+				string("member")   |
+				string("pseudo") >>   string("tmpl") 
 				)
 	    ;
 
@@ -315,8 +320,26 @@ string("global type")
 	    | string("init:")>>   node_id[handle_ndref]			
 	    | string("low :")  >> +(digit[handle_digits])
 	    | string("high:") >> -lit('-') >> +(digit[handle_digits])
-	    | string("accs:") >> string("pub")	
+	    | string("accs:") >> (
+				  string("pub")	 |
+				  string("priv")	 |
+				  string("prot")	 
+				  )
 	    | string("argt:")>>   node_id[handle_ndref]			
+
+	    | string("cnst:")>>   node_id[handle_ndref]			
+	    | string("rslt:")>>   node_id[handle_ndref]			
+	    | string("init:")>>   node_id[handle_ndref]			
+	    | string("base:")>>   node_id[handle_ndref]			
+
+	    | string("spec:") >> string("virt")
+
+	    ///array 
+	    | +(digit[handle_digits]) >> string("    :")>>   node_id[handle_ndref]			
+
+	    
+	    | string("vfld:")>>   node_id[handle_ndref]
+
 	    | string("body:")>> string("undefined")   
 	    | string("bpos:")  >>   node_id[handle_ndref]
 	    | string("chain:") >>   node_id[handle_ndref]
@@ -346,7 +369,11 @@ string("global type")
 	    | string("op") >> string("0:") >>   node_id[handle_ndref] // for constructor
 	    | string("op") >> string("1:") >>   node_id[handle_ndref] // for constructor
 	    | string("val :") >>   node_id[handle_ndref] // for constructor
+
+	    | new_field_name[handle_new_field] >>   node_id[handle_ndref] // for constructor
 	    ;
+
+	  new_field_name = (+char_("a-z_"));
 
 	  type_field= string("type:") >>   node_id[handle_ndref];
 
@@ -404,7 +431,8 @@ string("global type")
 	secondary_line ,
 	either_lines ,
 	identifier_node,
-	type_field
+	type_field,
+	new_field_name
 	;
       
     };
