@@ -102,7 +102,7 @@ namespace client
 	  filespec     =  
 	     (string("<built-in>:0") |
 	      (
-	       +(char_("-.a-zA-Z0-9"))  >>
+	       +(char_("_-.a-zA-Z0-9"))  >>
 	       lit(':') >> 
 	       +digit
 	       )
@@ -348,7 +348,11 @@ string("global type")
 	    | string("binf:")	>>   node_id[handle_ndref]		
 	    | string("flds:")	>>   node_id[handle_ndref]		
 	    | string("lang:")  >> string("C")	       
-   	    | string("link:")  >> string("extern")
+	    | string( "link:" ) >> (
+				    string("static")
+				    |
+				    string("extern")
+				    )
 	    | string("max :")>>   node_id[handle_ndref]			
 	    | string("min:")>>   node_id[handle_ndref]			
 	    | note_field
@@ -369,9 +373,94 @@ string("global type")
 	    | string("op") >> string("0:") >>   node_id[handle_ndref] // for constructor
 	    | string("op") >> string("1:") >>   node_id[handle_ndref] // for constructor
 	    | string("val :") >>   node_id[handle_ndref] // for constructor
-
+	    | somefield
 	    | new_field_name[handle_new_field] >>   node_id[handle_ndref] // for constructor
+
+
+
 	    ;
+
+
+	  somefield = 	    // a bunch of fields extracted
+	    (
+	     string( "and:" ) 
+	     |string( "args:" ) 
+	     | string( "andassign:" ) 
+	     | string( "assign:" ) 
+	     | string( "bitfield:" ) 
+	     | string( "bitfieldsize:" ) 
+	     | string( "body:" ) 
+	     | string( "call:" ) 
+	     | string( "clas:" ) 
+	     | string( "cls:" ) 
+	     | string( "compound:" ) 
+	     | string( "cond:" ) 
+	     | string( "csts:" ) 
+	     | string( "delete:" ) 
+	       | string( "deref:" ) 
+	       | string( "div:" ) 
+	       | string( "divassign:" ) 
+	       | string( "eq:" ) 
+	       | string( "fncs:" ) 
+	       | string( "ge:" ) 
+	       | string( "gt:" ) 
+	       | string( "hdlr:" ) 
+	       | string( "inst:" ) 
+	       | string( "land:" ) 
+	       | string( "le:" ) 
+	       | string( "lnot:" ) 
+	       | string( "lor:" ) 
+	       | string( "lshift:" ) 
+	       | string( "lshiftassign:" ) 
+	       | string( "lt:" ) 
+	       | string( "memref:" ) 
+	       | string( "min :" ) 
+	       | string( "minus:" ) 
+	       | string( "minusassign:" ) 
+	       | string( "mod:" ) 
+	       | string( "modassign:" ) 
+	       | string( "mult:" ) 
+	       | string( "multassign:" ) 
+	       | string( "ne:" ) 
+	       | string( "neg:" ) 
+	       | string( "new:" ) 
+	       | string( "not:" ) 
+	       | string( "op:" ) 
+	       | string( "or:" ) 
+	       | string( "or:" ) 
+	       | string( "orassign:" ) 
+	       | string( "orig:" ) 
+	       | string( "plus:" ) 
+	       | string( "plusassign:" ) 
+	       | string( "pos:" ) 
+	       | string( "postdec:" ) 
+	       | string( "postinc:" ) 
+	       | string( "predec:" ) 
+	       | string( "preinc:" ) 
+	       | string( "ref:" ) 
+	       | string( "refd:" ) 
+	       | string( "rshift:" ) 
+	       | string( "rshiftassign:" ) 
+	       | string( "spec:" ) 
+	       | string( "specbase:" ) 
+	       | string( "spectag:" ) 
+	       | string( "srcp:" ) 
+	       | string( "subs:" ) 
+	       | string( "tag:" ) 
+	       | string( "then:" ) 
+	       | string( "vecdelete:" ) 
+	       | string( "vecnew:" ) 
+	       | string( "xor:" ) 
+	       | string( "xorassign:" ) 
+	       | string( "addr:" ) 
+	       | string( "algn:" ) 
+	       | string( "alis:" ) 
+	       | string( "and:" ) 
+
+	       ) 
+	    >>   node_id[handle_ndref];
+
+
 
 	  new_field_name = (+char_("a-z_"));
 
@@ -432,7 +521,9 @@ string("global type")
 	either_lines ,
 	identifier_node,
 	type_field,
-	new_field_name
+	new_field_name,
+	somefield,
+	somefield2
 	;
       
     };
