@@ -102,7 +102,12 @@ namespace client
 	  filespec     =  
 	     (string("<built-in>:0") |
 	      (
-	       +(char_("_-.a-zA-Z0-9"))  >>
+	       +(
+		   lit("_")
+		 | lit("-")
+		 | char_("a-zA-Z0-9")
+
+		 )  >>
 	       lit(':') >> 
 	       +digit
 	       )
@@ -234,6 +239,8 @@ string("while_stmt")
 	    | string("lang_type")
 	    | string("parm_decl")
 	    | string("pointer_type")
+	    | string("dynamic_cast_expr") 
+	    | string("pointer_plus_expr")
 	    | string("real_type")
 	    | string("record_type")
 	    | string("reference_type")
@@ -302,6 +309,7 @@ string("global type")
 				string("artificial")  |
 				string("operator")   |
 				string("member")   |
+				string("destructor")   |
 				string("pseudo") >>   string("tmpl") 
 				)
 	    ;
@@ -331,11 +339,13 @@ string("global type")
 	    | string("rslt:")>>   node_id[handle_ndref]			
 	    | string("init:")>>   node_id[handle_ndref]			
 	    | string("base:")>>   node_id[handle_ndref]			
-
 	    | string("spec:") >> string("virt")
+	    //	    base
+            //tag 
+
 
 	    ///array 
-	    | +(digit[handle_digits]) >> string("    :")>>   node_id[handle_ndref]			
+	    | +(digit[handle_digits]) >> string(":")>>   node_id[handle_ndref]			
 
 	    
 	    | string("vfld:")>>   node_id[handle_ndref]
@@ -485,8 +495,61 @@ string("global type")
 	    | + field_value
 	    ;
 
+	  stray_operator  = 
+	    (  string("addr")
+	       //                          algn
+	       //                          cls 
+	       //                          op 2
+	       //                          srcp
+	       //tag 
+	       | string("andassign")
+	       | string("and")
+	       | string("assign")
+	       | string("call")
+	       | string("compound")
+	       | string("deref")
+	       | string("divassign")
+	       | string("div")
+	       | string("eq")
+	       | string("ge")
+	       | string("gt")
+	       | string("land")
+	       | string("le")
+	       | string("lnot")
+	       | string("lor")
+	       | string("lshiftassign")
+	       | string("lshif")
+	       | string("lt")
+	       | string("memref")
+	       | string("minusassign")
+	       | string("minus")
+	       | string("modassign")
+	       | string("mod")
+	       | string("multassign")
+	       | string("mult")
+	       | string("neg")
+	       | string("ne")
+	       | string("not")
+	       | string("orassign")
+	       | string("or")
+	       | string("plusassign")
+	       | string("plus")
+	       | string("pos")
+	       | string("postdec")
+	       | string("postinc")
+	       | string("predec")
+	       | string("preinc")
+	       | string("rshift")
+	       | string("rshiftassign")
+	       | string("rshift")
+	       | string("spcs")
+	       | string("subs")
+	       | string("xorassign")
+	       | string("xor")
+	       ) >> note_field;
+
 	  either_lines = 
-	    main_rule | secondary_line
+	    main_rule | secondary_line | stray_operator
 	    ;
 	  
         }
@@ -497,12 +560,12 @@ string("global type")
 	  node_id,
 	  bits,
 	  strg_value	  
-      ;
+	  ;
       
       
       // more complex space separated rules
       qi::rule<InputIterator, space_type , spirit::utree()> 
-		 ////////////////////////////
+      ////////////////////////////
 
       main_rule,
 	any_field,
@@ -523,7 +586,7 @@ string("global type")
 	type_field,
 	new_field_name,
 	somefield,
-	somefield2
+	stray_operator
 	;
       
     };
