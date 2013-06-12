@@ -487,13 +487,9 @@ string("global type")
 
 	  main_rule = 	  
 	    node_id[handle_nddecl] >> 
-	    node_type 
+	    node_type >> *(field_value)
 	    ;
 
-	  secondary_line = 
-	    namespace_decls_field 
-	    | + field_value
-	    ;
 
 	  stray_operator  = 
 	    (  string("addr")
@@ -549,7 +545,7 @@ string("global type")
 	       ) >> note_field;
 
 	  either_lines = 
-	    main_rule | secondary_line | stray_operator
+	    main_rule
 	    ;
 	  
         }
@@ -598,36 +594,64 @@ string("global type")
 ///////////////////////////////////////////////////////////////////////////////
 
 
+void parse_full_line(std::string str)
+{
+  str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+  std::cout << "LINE:";
+  std::cout << str << std::endl;
+  if (str[0] != '@')  {       
+    return ;
+  }
+
+  typedef std::string::const_iterator iterator_type;
+  std::string::const_iterator iter = str.begin();
+  std::string::const_iterator end = str.end();
+  client::tree_dump_file<iterator_type> p;
+  utree ut;
+  
+  if (phrase_parse (
+		    iter, 
+		    end, 
+		    p,
+		    space,
+		    ut
+		    )
+      )
+    {
+      std::cout << "-------------------------\n";
+      std::cout << "Parsing succeeded\n";
+      std::cout << str << " Parses OK: " << std::endl;
+    } else  {
+    std::cout << "\n-------------------------\n";
+      std::cout << " Parse Failed: " << str << std::endl;
+      std::cout << "-------------------------\n";
+  }
+}
+
 int
 main()
 {
-  typedef std::string::const_iterator iterator_type;
+
   std::string parsed;
   std::cout << "GCC tree parser for Spirit...\n\n";
   std::string str;
-  client::tree_dump_file<iterator_type> p;
-  utree ut;
+  std::string parts;
+  
   while (getline(std::cin, str))    {     
-    std::string::const_iterator iter = str.begin();
-    std::string::const_iterator end = str.end();
-    if (phrase_parse (
-			iter, 
-			end, 
-			p,
-			space,
-			ut
-			)
-	)
-      {
-	std::cout << "-------------------------\n";
-	std::cout << "Parsing succeeded\n";
-	std::cout << str << " Parses OK: " << std::endl;
-      } else  {
-      std::cout << "\n-------------------------\n";
-      std::cout << " Parse Failed: " << str << std::endl;
-      std::cout << "-------------------------\n";
+    if (str[0] == '@')  {       
+      if (parts.length()) { // previous item
+	parse_full_line(parts);
+      }	
+      parts=str;
+
+    } else {
+      // all the things after the @ up to the next @ we collect
+      parts = parts + str; // append
     }
   }
+  
+  parse_full_line(parts); // final line
+
   std::cout << "Bye... :-) \n\n";
   return 0;
 }
